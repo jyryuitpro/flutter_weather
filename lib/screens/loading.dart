@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter_weather/data/my_location.dart';
+import 'package:flutter_weather/data/network.dart';
+import 'package:flutter_weather/screens/weather_screen.dart';
 
 class Loading extends StatefulWidget {
   const Loading({Key? key}) : super(key: key);
@@ -11,38 +11,47 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
+  late double latitude3;
+  late double longitude3;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLocation();
-    fetchData();
   }
 
   void getLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      print(position);
-    } catch(e) {
-      print('There was a problem with the internet connection.');
-    }
+    MyLocation myLocation = MyLocation();
+    await myLocation.getMyCurrentLocation();
+    latitude3 = myLocation.latitude2;
+    longitude3 = myLocation.longitude2;
+    print(latitude3);
+    print(longitude3);
+
+    Network network = Network('https://api.openweathermap.org/data/2.5/weather?lat=$latitude3&lon=$longitude3&appid=$apikey&units=metric');
+    var weatherData = await network.getJsonData();
+    print(weatherData);
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return WeatherScreen(parseWeatherData: weatherData,);
+    },));
   }
 
-  void fetchData() async {
-    http.Response response = await http.get(Uri.parse('https://samples.openweathermap.org/data/2.5/weather?q=London&appid=b1b15e88fa797225412429c1c50c122a1'));
-    if (response.statusCode == 200) {
-      String jsonData = response.body;
-      var myJson = jsonDecode(jsonData)['weather'][0]['description'];
-      print(myJson);
-
-      var wind = jsonDecode(jsonData)['wind']['speed'];
-      print(wind);
-
-      var id = jsonDecode(jsonData)['id'];
-      print(id);
-    }
-  }
+  // void fetchData() async {
+  //
+  //
+  //     var myJson = parsingData['weather'][0]['description'];
+  //     print(myJson);
+  //
+  //     var wind = parsingData['wind']['speed'];
+  //     print(wind);
+  //
+  //     var id = parsingData['id'];
+  //     print(id);
+  //   } else {
+  //     print(response.statusCode);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
