@@ -29,14 +29,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     updateData(widget.parseWeatherData, widget.parseAirPollution);
   }
 
   void updateData(dynamic weatherData, dynamic airData) {
     cityName = weatherData['name'];
-    double temp2 = weatherData['main']['temp'];
+    double temp2 = weatherData['main']['temp'].toDouble();
     temp = temp2.round();
     int condition = weatherData['weather'][0]['id'];
     icon = model.getWeatherIcon(condition);
@@ -46,8 +45,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
     airIcon = model.getAirIcon(index);
     airState = model.getAirCondition(index);
 
-    dust1 = airData['list'][0]['components']['pm10'];
-    dust2 = airData['list'][0]['components']['pm2_5'];
+    dust1 = airData['list'][0]['components']['pm10'].toDouble();
+    dust2 = airData['list'][0]['components']['pm2_5'].toDouble();
   }
 
   String getSystemTiem() {
