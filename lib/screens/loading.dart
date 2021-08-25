@@ -29,29 +29,24 @@ class _LoadingState extends State<Loading> {
     print(latitude3);
     print(longitude3);
 
-    Network network = Network('https://api.openweathermap.org/data/2.5/weather?lat=$latitude3&lon=$longitude3&appid=$apikey&units=metric');
+    Network network = Network(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude3&lon=$longitude3&appid=$apikey&units=metric',
+        'https://api.openweathermap.org/data/2.5/air_pollution?lat=$latitude3&lon=$longitude3&appid=$apikey&units=metric');
     var weatherData = await network.getJsonData();
     print(weatherData);
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return WeatherScreen(parseWeatherData: weatherData,);
-    },));
-  }
 
-  // void fetchData() async {
-  //
-  //
-  //     var myJson = parsingData['weather'][0]['description'];
-  //     print(myJson);
-  //
-  //     var wind = parsingData['wind']['speed'];
-  //     print(wind);
-  //
-  //     var id = parsingData['id'];
-  //     print(id);
-  //   } else {
-  //     print(response.statusCode);
-  //   }
-  // }
+    var airData = await network.getAirData();
+    print(airData);
+
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return WeatherScreen(
+          parseWeatherData: weatherData,
+          parseAirPollution: airData,
+        );
+      },
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
